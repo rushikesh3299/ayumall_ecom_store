@@ -15,7 +15,7 @@ const getProductsFromWishlist = async (req, res) => {
       wishlist = newEmptyWishlist
     }
     for (i in wishlist.products) {
-      const product = await Product.findById(cart.products[i]._id)
+      const product = await Product.findById(wishlist.products[i]._id)
       let quantity = wishlist.products[i].quantity
       prodArr.push({ product, quantity })
     }
