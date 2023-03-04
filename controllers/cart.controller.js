@@ -1,10 +1,12 @@
 const { Cart } = require("../models/cart.model.js");
+const { Product } = require("../models/product.model.js");
 
 //@desc Get cart of user
 //@route GET -> /cart
 //@access Protected
 const getProductsFromCart = async (req, res) => {
   const userID = req.userID;
+  let prodArr = []
   try {
     let cart = await Cart.findOne({ userID });
     if (!cart) {
@@ -12,7 +14,11 @@ const getProductsFromCart = async (req, res) => {
       const newEmptyCart = await newCart.save();
       cart = newEmptyCart
     }
-    res.status(200).json({ "sucess": true, cart })
+    // for (i in cart.products) {
+    //   const product = await Product.findById(cart.products[i]._id)
+    //   prodArr.push(product)
+    // }
+    res.status(200).json({ "sucess": true, cart, prodArr })
   }
   catch (error) {
     res.status(500).json({ "sucess": false, "message": error })
