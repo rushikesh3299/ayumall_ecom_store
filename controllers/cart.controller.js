@@ -14,11 +14,12 @@ const getProductsFromCart = async (req, res) => {
       const newEmptyCart = await newCart.save();
       cart = newEmptyCart
     }
-    // for (i in cart.products) {
-    //   const product = await Product.findById(cart.products[i]._id)
-    //   prodArr.push(product)
-    // }
-    res.status(200).json({ "sucess": true, cart, prodArr })
+    for (i in cart.products) {
+      const product = await Product.findById(cart.products[i]._id)
+      let quantity = cart.products[i].quantity
+      prodArr.push({ product, quantity })
+    }
+    res.status(200).json({ "sucess": true, "cart": prodArr })
   }
   catch (error) {
     res.status(500).json({ "sucess": false, "message": error })

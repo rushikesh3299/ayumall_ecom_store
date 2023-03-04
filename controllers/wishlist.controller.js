@@ -1,10 +1,12 @@
 const { Wishlist } = require("../models/wishlist.model.js");
+const { Product } = require("../models/product.model.js");
 
 //@desc Get wishlist of user
 //@route GET -> /wishlist
 //@access Protected
 const getProductsFromWishlist = async (req, res) => {
   const userID = req.userID;
+  let prodArr = []
   try {
     let wishlist = await Wishlist.findOne({ userID });
     if (!wishlist) {
@@ -12,7 +14,12 @@ const getProductsFromWishlist = async (req, res) => {
       const newEmptyWishlist = await newWishlist.save();
       wishlist = newEmptyWishlist
     }
-    res.status(200).json({ "sucess": true, wishlist })
+    for (i in wishlist.products) {
+      const product = await Product.findById(cart.products[i]._id)
+      let quantity = wishlist.products[i].quantity
+      prodArr.push({ product, quantity })
+    }
+    res.status(200).json({ "sucess": true, "wishlist": prodArr })
   }
   catch (error) {
     res.status(500).json({ "sucess": false, "message": error })
