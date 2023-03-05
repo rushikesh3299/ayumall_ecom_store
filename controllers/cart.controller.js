@@ -99,8 +99,28 @@ const removeProductFromCart = async (req, res) => {
   }
 }
 
+//@desc Buy product from user cart
+//@route DELETE -> /cart/checkout
+//@access Protected
+const buyProductFromCart = async (req, res) => {
+  const prodArr = req.body;
+  try {
+    for (i in prodArr.checkoutCart) {
+      const prodId = prodArr.checkoutCart[i]._id
+      const prodQty = prodArr.checkoutCart[i].quantity
+      console.log(prodId, prodQty)
+      await Product.findOneAndUpdate({ _id: prodId }, { $inc: { avalQty: -prodQty } }, { new: true })
+    }
+    res.status(200).json({ "sucess": true, prodArr })
+  }
+  catch (error) {
+    res.status(500).json({ "sucess": false, "message": error })
+  }
+}
+
 module.exports = {
   getProductsFromCart,
   addProductToCart,
-  removeProductFromCart
+  removeProductFromCart,
+  buyProductFromCart
 }
