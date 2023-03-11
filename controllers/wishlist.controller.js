@@ -41,19 +41,22 @@ const addProductToWishlist = async (req, res) => {
     }
     wishlist = await Wishlist.findOne({ userID });
 
-    //Inrement quantity if product already in wishlist
+    //If product already in wishlist
     for (item in wishlist.products) {
+      if (wishlist.products[item]._id.valueOf() == newProduct._id) {
+        productAlradyInWishlist = true;
+      }
+    }
+
+    if (productAlradyInWishlist) {
       res.status(500).json({ "sucess": true, "message": "Product already in wishlist" })
-    }
-
-    //Add new product 
-    if (!productAlradyInWishlist) {
+    } else {
       wishlist.products.push(newProduct);
-    }
 
-    //Save vart changes to db
-    wishlist = await wishlist.save()
-    res.status(200).send(wishlist)
+      //Save vart changes to db
+      wishlist = await wishlist.save()
+      res.status(200).send(wishlist)
+    }
   }
   catch (error) {
     res.status(500).json({ "sucess": false, "message": error })
