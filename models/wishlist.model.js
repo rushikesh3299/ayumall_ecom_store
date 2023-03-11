@@ -5,7 +5,6 @@ const WishlistSchema = new Schema({
   userID: { type: String },
   products: [{
     productId: { type: Schema.Types.ObjectId, ref: 'Product' },
-    quantity: { type: Number, default: 1 }
   }]
 })
 

@@ -16,8 +16,7 @@ const getProductsFromWishlist = async (req, res) => {
     }
     for (i in wishlist.products) {
       const product = await Product.findById(wishlist.products[i]._id)
-      let quantity = wishlist.products[i].quantity
-      prodArr.push({ product, quantity })
+      prodArr.push({ product })
     }
     res.status(200).json({ "sucess": true, "wishlist": prodArr })
   }
@@ -44,10 +43,7 @@ const addProductToWishlist = async (req, res) => {
 
     //Inrement quantity if product already in wishlist
     for (item in wishlist.products) {
-      if (wishlist.products[item]._id.valueOf() == newProduct._id) {
-        wishlist.products[item].quantity = wishlist.products[item].quantity + 1;
-        productAlradyInWishlist = true;
-      }
+      res.status(500).json({ "sucess": true, "message": "Product already in wishlist" })
     }
 
     //Add new product 
@@ -84,12 +80,6 @@ const removeProductFromWishlist = async (req, res) => {
         productToBeRemoved = item
       }
     })
-
-    //Decrease product quantity if more than one
-    if (productToBeRemoved.quantity > 1) {
-      productToBeRemoved.quantity = productToBeRemoved.quantity - 1;
-      remainingProduct.push(productToBeRemoved)
-    }
 
     const newWishlist = await wishlist.updateOne({ userID, products: remainingProduct })
     res.status(200).json({ "sucess": true })
