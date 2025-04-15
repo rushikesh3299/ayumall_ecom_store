@@ -28,7 +28,7 @@ const addNewUser = async (req, res) => {
         .json({ sucess: true, data: newlyAddedUser, encodedToken: jwtToken });
     }
   } catch (error) {
-    res.status(500).json({ sucess: false });
+    res.status(500).json({ sucess: false, message: error.message });
   }
 };
 
@@ -59,16 +59,16 @@ const logInUser = async (req, res) => {
           .status(200)
           .json({ sucess: true, encodedToken: jwtToken, data: foundUser });
       } else {
-        res.status(200).json({ sucess: false, message: "Wrong password" });
+        res.status(401).json({ sucess: false, message: "Wrong password" });
       }
     } else {
-      res.status(200).json({
+      res.status(404).json({
         sucess: false,
         message: "User with entered email id dosen't exists",
       });
     }
   } catch (error) {
-    res.status(500).json({ sucess: false });
+    res.status(500).json({ sucess: false, message: error.message });
   }
 };
 

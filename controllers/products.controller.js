@@ -6,11 +6,11 @@ const { Product } = require("../models/product.model.js");
 const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find({});
-    res.status(200).json({ 'products': products, 'sucess': true })
+    res.status(200).json({ products: products, sucess: true });
   } catch (error) {
-    res.status(500).json({ 'sucess': false })
+    res.status(500).json({ sucess: false, message: error.message });
   }
-}
+};
 
 //@desc Add new Products
 //@route POST -> /products
@@ -20,12 +20,12 @@ const addNewProduct = async (req, res) => {
     const receivedProduct = req.body;
     const newProduct = new Product(receivedProduct);
     const newlyAddedProduct = await newProduct.save();
-    res.status(201).json({ 'product': newlyAddedProduct, 'sucess': true })
+    res.status(201).json({ product: newlyAddedProduct, sucess: true });
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ 'sucess': false })
+    console.log(error);
+    res.status(500).json({ sucess: false, message: error.message });
   }
-}
+};
 
 //@desc Get specific Product
 //@route Get -> /products/:productID
@@ -34,20 +34,21 @@ const getProductById = async (req, res) => {
   const productId = req.params.productId;
 
   try {
-    const product = await Product.findById(productId)
+    const product = await Product.findById(productId);
     if (!product) {
-      res.status(400).json({ 'sucess': false, 'message': 'Product not found' })
+      res.status(400).json({ sucess: false, message: "Product not found" });
     }
-    res.status(200).json({ 'sucess': true, 'product': product })
+    res.status(200).json({ sucess: true, product: product });
   } catch (error) {
     res.status(400).json({
-      'sucess': false, 'message': 'Couldn\'t retrive product'
-    })
+      sucess: false,
+      message: "Couldn't retrive product",
+    });
   }
-}
+};
 
 module.exports = {
   getAllProducts,
   addNewProduct,
-  getProductById
-}
+  getProductById,
+};

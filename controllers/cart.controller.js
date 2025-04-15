@@ -6,25 +6,24 @@ const { Product } = require("../models/product.model.js");
 //@access Protected
 const getProductsFromCart = async (req, res) => {
   const userID = req.userID;
-  let prodArr = []
+  let prodArr = [];
   try {
     let cart = await Cart.findOne({ userID });
     if (!cart) {
-      const newCart = new Cart({ userID, products: [] })
+      const newCart = new Cart({ userID, products: [] });
       const newEmptyCart = await newCart.save();
-      cart = newEmptyCart
+      cart = newEmptyCart;
     }
     for (i in cart.products) {
-      const product = await Product.findById(cart.products[i]._id)
-      let quantity = cart.products[i].quantity
-      prodArr.push({ product, quantity })
+      const product = await Product.findById(cart.products[i]._id);
+      let quantity = cart.products[i].quantity;
+      prodArr.push({ product, quantity });
     }
-    res.status(200).json({ "sucess": true, "cart": prodArr })
+    res.status(200).json({ sucess: true, cart: prodArr });
+  } catch (error) {
+    res.status(500).json({ sucess: false, message: error.message });
   }
-  catch (error) {
-    res.status(500).json({ "sucess": false, "message": error })
-  }
-}
+};
 
 //@desc Add product to user cart
 //@route POST -> /cart
@@ -37,7 +36,7 @@ const addProductToCart = async (req, res) => {
     let cart = await Cart.findOne({ userID });
     let productAlradyInCart = false;
     if (!cart) {
-      const newCart = new Cart({ userID, products: [] })
+      const newCart = new Cart({ userID, products: [] });
       const newEmptyCart = await newCart.save();
     }
     cart = await Cart.findOne({ userID });
@@ -50,19 +49,18 @@ const addProductToCart = async (req, res) => {
       }
     }
 
-    //Add new product 
+    //Add new product
     if (!productAlradyInCart) {
       cart.products.push(newProduct);
     }
 
     //Save vart changes to db
-    cart = await cart.save()
-    res.status(200).send(cart)
+    cart = await cart.save();
+    res.status(200).send(cart);
+  } catch (error) {
+    res.status(500).json({ sucess: false, message: error.message });
   }
-  catch (error) {
-    res.status(500).json({ "sucess": false, "message": error })
-  }
-}
+};
 
 //@desc Delete product from user cart
 //@route DELETE -> /cart/:productId
@@ -76,28 +74,29 @@ const removeProductFromCart = async (req, res) => {
     let productToBeRemoved;
 
     //Remove unwanted product
-    const remainingProduct = allProducts.filter(item => {
+    const remainingProduct = allProducts.filter((item) => {
       if (item._id.valueOf() != productId) {
-        return true
+        return true;
+      } else {
+        productToBeRemoved = item;
       }
-      else {
-        productToBeRemoved = item
-      }
-    })
+    });
 
     //Decrease product quantity if more than one
     if (productToBeRemoved.quantity > 1) {
       productToBeRemoved.quantity = productToBeRemoved.quantity - 1;
-      remainingProduct.push(productToBeRemoved)
+      remainingProduct.push(productToBeRemoved);
     }
 
-    const newCart = await cart.updateOne({ userID, products: remainingProduct })
-    res.status(200).json({ "sucess": true })
+    const newCart = await cart.updateOne({
+      userID,
+      products: remainingProduct,
+    });
+    res.status(200).json({ sucess: true });
+  } catch (error) {
+    res.status(500).json({ sucess: false, message: error.message });
   }
-  catch (error) {
-    res.status(500).json({ "sucess": false, "message": error })
-  }
-}
+};
 
 //@desc Buy product from user cart
 //@route DELETE -> /cart/checkout
@@ -106,21 +105,24 @@ const buyProductFromCart = async (req, res) => {
   const prodArr = req.body;
   try {
     for (i in prodArr.checkoutCart) {
-      const prodId = prodArr.checkoutCart[i]._id
-      const prodQty = prodArr.checkoutCart[i].quantity
-      console.log(prodId, prodQty)
-      await Product.findOneAndUpdate({ _id: prodId }, { $inc: { avalQty: -prodQty } }, { new: true })
+      const prodId = prodArr.checkoutCart[i]._id;
+      const prodQty = prodArr.checkoutCart[i].quantity;
+      console.log(prodId, prodQty);
+      await Product.findOneAndUpdate(
+        { _id: prodId },
+        { $inc: { avalQty: -prodQty } },
+        { new: true }
+      );
     }
-    res.status(200).json({ "sucess": true, prodArr })
+    res.status(200).json({ sucess: true, prodArr });
+  } catch (error) {
+    res.status(500).json({ sucess: false, message: error.message });
   }
-  catch (error) {
-    res.status(500).json({ "sucess": false, "message": error })
-  }
-}
+};
 
 module.exports = {
   getProductsFromCart,
   addProductToCart,
   removeProductFromCart,
-  buyProductFromCart
-}
+  buyProductFromCart,
+};
