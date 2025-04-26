@@ -23,9 +23,10 @@ const addNewUser = async (req, res) => {
         process.env.secreatKey,
         { expiresIn: "24h" }
       );
-      res
-        .status(201)
-        .json({ sucess: true, data: newlyAddedUser, encodedToken: jwtToken });
+      res.cookie("token", jwtToken, {
+        expires: new Date(Date.now() + 24 * 3600000),
+      });
+      res.status(201).json({ sucess: true, data: newlyAddedUser });
     }
   } catch (error) {
     res.status(500).json({ sucess: false, message: error.message });
@@ -55,9 +56,12 @@ const logInUser = async (req, res) => {
           process.env.secreatKey,
           { expiresIn: "24h" }
         );
-        res
-          .status(200)
-          .json({ sucess: true, encodedToken: jwtToken, data: foundUser });
+        console.log("here");
+        console.log("jwtToken", jwtToken);
+        res.cookie("token", jwtToken, {
+          expires: new Date(Date.now() + 24 * 3600000),
+        });
+        res.status(200).json({ sucess: true, data: foundUser });
       } else {
         res.status(401).json({ sucess: false, message: "Wrong password" });
       }
@@ -72,7 +76,17 @@ const logInUser = async (req, res) => {
   }
 };
 
+//@desc Logout user
+//@route POST -> /auth/logout
+//@access Public
+const logOutUser = async (req, res) => {
+  /* cleanup activities if required */
+  res.cookie("token", null, { expires: new Date(Date.now()) });
+  res.status(200).json({ sucess: false, message: "Logout Successful" });
+};
+
 module.exports = {
   addNewUser,
   logInUser,
+  logOutUser,
 };
