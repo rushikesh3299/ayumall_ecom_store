@@ -24,6 +24,7 @@ app.get("/", (req, res) => {
 
 app.use("/products", require("./router/public/products.route.js"));
 app.use("/auth", require("./router/public/users.route.js"));
+app.use("/profile", require("./router/protected/profile.route.js"));
 app.use("/cart", require("./router/protected/cart.route.js"));
 app.use("/wishlist", require("./router/protected/wishlist.route.js"));
 

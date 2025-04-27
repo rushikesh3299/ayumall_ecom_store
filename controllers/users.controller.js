@@ -56,8 +56,6 @@ const logInUser = async (req, res) => {
           process.env.secreatKey,
           { expiresIn: "24h" }
         );
-        console.log("here");
-        console.log("jwtToken", jwtToken);
         res.cookie("token", jwtToken, {
           expires: new Date(Date.now() + 24 * 3600000),
         });

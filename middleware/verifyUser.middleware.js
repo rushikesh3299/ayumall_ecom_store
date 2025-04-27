@@ -15,6 +15,11 @@ const verifyUser = async (req, res, next) => {
     const userData = jwt.verify(token, secreatKey);
     const isUserExists = await User.findOne({ email: userData.username });
     req.userID = isUserExists.id;
+    req.userData = {
+      firstname: isUserExists?.firstname,
+      lastname: isUserExists?.lastname,
+      email: isUserExists?.email,
+    };
     return next();
   } catch (error) {
     return res.status(403).json({ sucess: false, message: "invalid token" });
